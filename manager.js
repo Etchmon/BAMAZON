@@ -42,22 +42,43 @@ connection.connect(function(err) {
                     {
                         name:"productChoice",
                         type:"input",
-                        message:"Which Item_Id would you like to Add"
+                        message:"Which Item_Id would you like to Add to"
                     },
                     {
                         name:"amount",
                         type:"input",
-                        message:"How many would you like to Add?"
+                        message:"How much would you like to Add?"
                     }
                 ]).then(function(answer){
-                    var newQuantity = answer.amount + res.Stock_quantity;
-                    console.log(newQuantity);
+                    var query = "Select * FROM products WHERE ?"
+                    connection.query(query, { Item_ID: answer.productChoice }, function (err, res){
+                        var newAmount = parseInt(answer.amount) + res[0].Stock_Quantity
+                        connection.query("UPDATE products SET ? WHERE ?"
+                        ,[
+                            {
+                                Stock_Quantity: newAmount,
+                            },
+                            {
+                                Item_ID: answer.productChoice,
+                            }
+
+                        ],function(err, res){
+                            if(err) throw err;
+                            console.log("The Updated Stock_Quantity is: " + newAmount);
+                        })
+                        
+
+                    },
                     
+
+
+                    
+                )
                 })
             });
         }
         else if(answer.manager === "Add to Products") {
-
+            inquirer.prompt()
         }
     })
 })
